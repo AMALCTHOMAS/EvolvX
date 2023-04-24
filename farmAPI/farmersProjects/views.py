@@ -57,7 +57,9 @@ class ManageProjectView(APIView):
             return Response({"success":"Project created successfully"},status=status.HTTP_201_CREATED)
         except:
             return Response({"error":"Something went wrong create project"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
+
+
 class ProjectDetailAPIView(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = Projects.objects.all()
@@ -86,3 +88,20 @@ class BookigAPIView(APIView):
                 return Response({"success":"Booking done successfully"},status=status.HTTP_201_CREATED)
             except:
                 return Response({"error":"Something went wrong while Booking"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class BookingListAPIView(APIView):
+    def get(self,request,format=None):
+        try:
+            user = request.user
+            if not user.is_farmer:
+                booking = Booking.objects.order_by('-book_date').filter(customer = user.email)
+                booking = BookingSerializer(booking,many=True)
+                return Response({'bookingsCustomer':booking.data},status=status.HTTP_200_OK)
+            booking = Booking.objects.order_by('-book_date').filter(customer = user.email)
+            booking = BookingSerializer(booking,many=True)
+            return Response({'bookingsFarmer':booking.data},status=status.HTTP_200_OK)
+        except:
+            return Response({"error":"Something went wrong when booking booking list"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
