@@ -18,3 +18,10 @@ class Projects(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Booking(models.Model):
+    projectID = models.ImageField(null=False)
+    title = models.CharField(max_length=255)
+    farmer = models.EmailField(max_length=255)
+    customer = models.EmailField(max_length=255)
+    book_date = models.DateField(default=now)

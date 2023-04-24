@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
-from .models import Projects
-from rest_framework import status
+from .models import Projects,Booking
+from rest_framework import status,generics,permissions
 from rest_framework.response import Response
-from .serializers import ProjectSerializer
+from .serializers import ProjectSerializer,BookingSerializer
 
 class ManageProjectView(APIView):
     def get(self,request,format=None):
@@ -13,9 +13,7 @@ class ManageProjectView(APIView):
             slug = request.query_params.get('slug')
 
             if not slug:
-                projects = Projects.objects.order_by('-date_created').filter(
-                    farmer = user.email
-                )
+                projects = Projects.objects.order_by('-date_created').filter(farmer = user.email)
                 projects = ProjectSerializer(projects,many=True)
                 return Response({'projects':projects.data},status=status.HTTP_200_OK)
 
@@ -60,3 +58,25 @@ class ManageProjectView(APIView):
         except:
             return Response({"error":"Something went wrong create project"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+class ProjectDetailAPIView(generics.RetrieveAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = Projects.objects.all()
+    serializer_class = ProjectSerializer
+
+class BookigAPIView(APIView):
+        def post(self,request):
+            try:
+                data = request.data
+                projectID = data['id']
+                title = data['title']
+                farmer = data['farmer']
+                customer = request.user
+                Booking.objects.create(
+                    projectID = projectID,
+                    title =title,
+                    farmer = farmer,
+                    customer = customer
+                )
+                return Response({"success":"Booking done successfully"},status=status.HTTP_201_CREATED)
+            except:
+                return Response({"error":"Something went wrong while Booking"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
