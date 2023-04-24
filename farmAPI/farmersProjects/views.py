@@ -59,9 +59,15 @@ class ManageProjectView(APIView):
             return Response({"error":"Something went wrong create project"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class ProjectDetailAPIView(generics.RetrieveAPIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = Projects.objects.all()
     serializer_class = ProjectSerializer
+
+class ProjectListAPIView(generics.ListAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    queryset = Projects.objects.order_by('-date_created').all()
+    serializer_class = ProjectSerializer
+
 
 class BookigAPIView(APIView):
         def post(self,request):
