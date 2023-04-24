@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/token/verify',TokenVerifyView.as_view()),
     path('auth/user/',include('user.urls')),
     path('api/projects/',include('farmersProjects.urls')),
+    path('api/products/',include('products.urls')),
     path('admin/', admin.site.urls),
 ]
 

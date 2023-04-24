@@ -19,6 +19,7 @@ class ManageProjectView(APIView):
 
         except:
             return Response({"error":"Something went wrong grt project"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
     def post(self,request):
         try:
             user = request.user
